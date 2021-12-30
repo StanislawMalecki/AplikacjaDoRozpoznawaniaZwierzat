@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
@@ -24,16 +25,19 @@ import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
+import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 
 public class CameraActivity extends Activity implements CameraBridgeViewBase.CvCameraViewListener2{
     private static final String TAG="MainActivity";
 
+    private Handler threadHandler = new Handler();
     private Mat mRgba;
     private Mat frame;
     private Mat mGray;
     private Switch detectionSwitch;
+    private int frame_counter = 0;
     private Button goBackButton;
     private TextView whatAnimal;
     private boolean detectionOn = false;
@@ -80,16 +84,6 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
                     MY_PERMISSIONS_REQUEST_CAMERA);
         }
 
-        int MY_PERMISSIONS_REQUEST_STORAGE=0;
-        // if storage permission is not given it will ask for it on device
-        if (ContextCompat.checkSelfPermission(CameraActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)
-                == PackageManager.PERMISSION_DENIED)
-        {
-            ActivityCompat.requestPermissions(CameraActivity.this, new String[] {Manifest.permission.READ_EXTERNAL_STORAGE},
-                    MY_PERMISSIONS_REQUEST_STORAGE);
-        }
-
-
         setContentView(R.layout.activity_camera);
 
         mOpenCvCameraView=(CameraBridgeViewBase) findViewById(R.id.frame_Surface);
@@ -107,14 +101,6 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
             @Override
             public void onClick(View v) {
                 detectionOn = detectionSwitch.isChecked();
-                if(detectionOn)
-                {
-                    getAnimal(whatAnimal);
-                }
-                else
-                {
-                    whatAnimal.setText(" ");
-                }
             }
         });
 
@@ -177,20 +163,22 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame)
     {
         mRgba=inputFrame.rgba();
+        if(detectionOn)
+        {
+            if(frame_counter % 30 ==0)
+            {
+                getAnimal(whatAnimal);
+            }
+            frame_counter++;
+        }
+
         return mRgba;
     }
 
     public void getAnimal(TextView textView)
     {
         frame = mRgba;
-        GetAnimalName animalName = new GetAnimalName(frame);
-        Thread thread = new Thread(animalName, "GetAnimalThread");
-        thread.start();
-        try {
-            thread.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        textView.setText(animalName.getNameOfAnimal());
+        GetAnimalName animalName = new GetAnimalName(frame, textView);
+        animalName.execute(frame);
     }
 }

@@ -2,8 +2,12 @@ package com.example.aplikacja;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -47,6 +51,15 @@ public class  MainActivity extends AppCompatActivity {
 
         if (! Python.isStarted()) {
             Python.start(new AndroidPlatform(this));
+        }
+
+        int MY_PERMISSIONS_REQUEST_STORAGE=0;
+        // if storage permission is not given it will ask for it on device
+        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_DENIED)
+        {
+            ActivityCompat.requestPermissions(MainActivity.this, new String[] {Manifest.permission.READ_EXTERNAL_STORAGE},
+                    MY_PERMISSIONS_REQUEST_STORAGE);
         }
 
         i1 = (ImageView)findViewById(R.id.imageView);
@@ -124,15 +137,7 @@ public class  MainActivity extends AppCompatActivity {
 
     public void getAnimal(TextView textView)
     {
-        GetAnimalName animalName = new GetAnimalName(image);
-        Thread thread = new Thread(animalName, "GetAnimalThread");
-        thread.start();
-        try {
-            thread.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        textView.setText(animalName.getNameOfAnimal());
+        GetAnimalName animalName = new GetAnimalName(image, textView);
+        animalName.execute();
     }
-
 }

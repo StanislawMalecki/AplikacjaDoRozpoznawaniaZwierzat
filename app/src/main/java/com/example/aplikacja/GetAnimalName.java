@@ -1,6 +1,10 @@
 package com.example.aplikacja;
 
 import android.graphics.Bitmap;
+import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Looper;
+import android.widget.TextView;
 
 import com.chaquo.python.Python;
 
@@ -9,32 +13,30 @@ import org.opencv.core.Mat;
 
 import java.io.ByteArrayOutputStream;
 
-public class GetAnimalName implements Runnable
+public class GetAnimalName extends AsyncTask<Mat, String, String>
 {
     private static Mat FRAME = new Mat();
     private static Bitmap bmp;
     private static Bitmap bitmap;
     boolean gotInMat;
-    private String nameOfAnimal;
+    TextView textView;
+    private String nameOfAnimal = "processing";
 
-    public GetAnimalName(Mat frame)
+    public GetAnimalName(Mat frame, TextView textView)
     {
         gotInMat =true;
         FRAME = frame;
+        this.textView = textView;
     }
 
-    public GetAnimalName(Bitmap newBmp) {
+    public GetAnimalName(Bitmap newBmp, TextView textView) {
         gotInMat = false;
         bmp=newBmp;
+        this.textView = textView;
     }
 
     @Override
-    public void run() {
-        classifyAnimal();
-    }
-
-    public void classifyAnimal()
-    {
+    protected String doInBackground(Mat... mats) {
         Python py = Python.getInstance();
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         if(gotInMat)
@@ -50,11 +52,33 @@ public class GetAnimalName implements Runnable
         bitmap.compress(Bitmap.CompressFormat.JPEG, 90, byteArrayOutputStream);
         byte[] byteArray = byteArrayOutputStream.toByteArray();
         nameOfAnimal = py.getModule("Loading test").callAttr("test", byteArray).toString();
-    }
-
-    public String getNameOfAnimal()
-    {
         return nameOfAnimal;
     }
 
+    @Override
+    protected void onPostExecute(String s) {
+        super.onPostExecute(s);
+
+        Handler threadHandler = new Handler(Looper.getMainLooper());
+        threadHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                textView.setText(nameOfAnimal);
+            }
+        });
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+
+        Handler threadHandler = new Handler(Looper.getMainLooper());
+        threadHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                textView.setText("Przetwarzanie...");
+            }
+        });
+
+    }
 }
