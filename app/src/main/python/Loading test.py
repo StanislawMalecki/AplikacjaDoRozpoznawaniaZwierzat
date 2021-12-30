@@ -16,8 +16,9 @@ def test(zdj):
     Model = keras.models.load_model(f"{path}/a/CatDogElefant.h5");
     pic = Image.open(io.BytesIO(bytes(zdj)))
     pic = pic.resize((128,128),Image.NEAREST)
-    test_image = np.array(pic)
+    test_image = np.array(pic, dtype='float')
     test_image = np.expand_dims(test_image, axis = 0)
+    test_image/=255
     result = Model.predict(test_image)
     if (result[0][0] == result[0][1] and result[0][0] == result[0][2]):
         return "none " 
