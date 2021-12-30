@@ -23,10 +23,10 @@ def test(zdj):
     if (result[0][0] == result[0][1] and result[0][0] == result[0][2]):
         return "none " 
     elif (result[0][0]>result[0][1] and result[0][0]>result[0][2]):
-        return "cat "+ str(result[0][0])
+        return "kot "+ str(result[0][0])
     elif (result[0][1]>result[0][0] and result[0][1]>result[0][2]):
-        return "dog "+ str(result[0][1])
+        return "pies "+ str(result[0][1])
     elif (result[0][2]>result[0][1] and result[0][2]>result[0][0]):
-        return "elefant "+ str(result[0][2])
+        return "słoń "+ str(result[0][2])
     else:
         return "idk"

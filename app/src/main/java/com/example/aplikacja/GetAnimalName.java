@@ -20,7 +20,7 @@ public class GetAnimalName extends AsyncTask<Mat, String, String>
     private static Bitmap bitmap;
     boolean gotInMat;
     TextView textView;
-    private String nameOfAnimal = "processing";
+    private String nameOfAnimal;
 
     public GetAnimalName(Mat frame, TextView textView)
     {
@@ -76,7 +76,10 @@ public class GetAnimalName extends AsyncTask<Mat, String, String>
         threadHandler.post(new Runnable() {
             @Override
             public void run() {
-                textView.setText("Przetwarzanie...");
+                if(textView.getText().toString().contains("0"))
+                {
+                    textView.setText("Przetwarzanie...");
+                }
             }
         });
 
