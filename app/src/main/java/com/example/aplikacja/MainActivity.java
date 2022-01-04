@@ -137,7 +137,8 @@ public class  MainActivity extends AppCompatActivity {
 
     public void getAnimal(TextView textView)
     {
-        GetAnimalName animalName = new GetAnimalName(image, textView);
-        animalName.execute();
+        GetAnimalName animalName = new GetAnimalName(textView);
+        image.reconfigure(image.getHeight(), image.getWidth(), Bitmap.Config.RGB_565);
+        animalName.execute(image);
     }
 }

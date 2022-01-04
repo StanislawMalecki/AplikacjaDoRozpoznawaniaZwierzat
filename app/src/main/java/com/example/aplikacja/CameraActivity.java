@@ -7,6 +7,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -26,6 +27,7 @@ import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
+import org.opencv.android.Utils;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
@@ -37,6 +39,7 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
     private Mat mRgba;
     private Mat frame;
     private Mat mGray;
+    private Bitmap bitmap;
     private Switch detectionSwitch;
     private int frame_counter = 0;
     private Button goBackButton;
@@ -163,6 +166,7 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
     {
         mRgba = new Mat(height, width, CvType.CV_64FC4);
         mGray = new Mat(height, width, CvType.CV_8UC1);
+        bitmap = Bitmap.createBitmap(width,height,Bitmap.Config.RGB_565);
     }
     public void onCameraViewStopped()
     {
@@ -186,7 +190,8 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
     public void getAnimal(TextView textView)
     {
         frame = mRgba;
-        GetAnimalName animalName = new GetAnimalName(frame, textView);
-        animalName.execute(frame);
+        GetAnimalName animalName = new GetAnimalName(textView);
+        Utils.matToBitmap(frame, bitmap);
+        animalName.execute(bitmap);
     }
 }
