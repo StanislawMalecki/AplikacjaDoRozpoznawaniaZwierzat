@@ -41,7 +41,6 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
     private Handler threadHandler = new Handler();
     private Mat mRgba;
     private Mat frame;
-    private Mat mGray;
     private Bitmap bitmap;
     private Switch detectionSwitch;
     private Button goBackButton;
@@ -179,7 +178,6 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
     public void onCameraViewStarted(int width ,int height)
     {
         mRgba = new Mat(height, width, CvType.CV_64FC4);
-        mGray = new Mat(height, width, CvType.CV_8UC1);
         bitmap = Bitmap.createBitmap(width,height,Bitmap.Config.RGB_565);
     }
     public void onCameraViewStopped()
@@ -192,6 +190,10 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
         if(detectionOn)
         {
             getAnimal(whatAnimal);
+        }
+        else
+        {
+            animalName.cancel(true);
         }
         return mRgba;
     }

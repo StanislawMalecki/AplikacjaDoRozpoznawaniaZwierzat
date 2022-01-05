@@ -135,7 +135,6 @@ public class  MainActivity extends AppCompatActivity {
         return uri.getPath();
     }
 
-
     public void getAnimal(TextView textView)
     {
         animalName = new GetAnimalName(textView);

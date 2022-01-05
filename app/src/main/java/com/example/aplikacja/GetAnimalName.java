@@ -34,14 +34,17 @@ public class GetAnimalName extends AsyncTask<Bitmap, String, Void>
                     break;
                 }
                 Long start = currentTimeMillis();
+
                 Python py = Python.getInstance();
                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                 bitmaps[0].compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
                 byte[] byteArray = byteArrayOutputStream.toByteArray();
                 nameOfAnimal = py.getModule("Loading test").callAttr("test", byteArray).toString();
+
                 Long time = currentTimeMillis()-start;
                 Log.i("czas", "_"+time);
                 CameraActivity.allTimes.add(time);
+
                 Handler threadHandler = new Handler(Looper.getMainLooper());
                 threadHandler.post(new Runnable() {
                     @Override
