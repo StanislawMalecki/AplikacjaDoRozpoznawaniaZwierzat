@@ -189,19 +189,15 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
         mRgba=inputFrame.rgba();
         if(detectionOn)
         {
-            getAnimal(whatAnimal);
-        }
-        else
-        {
-            animalName.cancel(true);
+            getAnimal(whatAnimal, detectionSwitch);
         }
         return mRgba;
     }
 
-    public void getAnimal(TextView textView)
+    public void getAnimal(TextView textView, Switch detectionSwitch)
     {
         frame = mRgba;
-        animalName = new GetAnimalName(textView);
+        animalName = new GetAnimalName(textView, detectionSwitch);
         Utils.matToBitmap(frame, bitmap);
         animalName.execute(bitmap);
     }

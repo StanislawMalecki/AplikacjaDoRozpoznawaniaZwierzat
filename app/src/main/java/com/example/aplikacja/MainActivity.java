@@ -15,6 +15,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -22,10 +23,14 @@ import android.widget.TextView;
 
 import com.chaquo.python.Python;
 import com.chaquo.python.android.AndroidPlatform;
+import com.github.amlcurran.showcaseview.OnShowcaseEventListener;
+import com.github.amlcurran.showcaseview.ShowcaseView;
+import com.github.amlcurran.showcaseview.targets.ActionViewTarget;
+import com.github.amlcurran.showcaseview.targets.ViewTarget;
 
 import org.opencv.android.OpenCVLoader;
 
-public class  MainActivity extends AppCompatActivity {
+public class  MainActivity extends AppCompatActivity implements OnShowcaseEventListener {
     static {
         if(OpenCVLoader.initDebug()){
             Log.d("MainActivity: ","Opencv is loaded");
@@ -46,6 +51,7 @@ public class  MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        isImageUploaded = false;
 
         OpenCVLoader.initDebug();
 
@@ -89,6 +95,15 @@ public class  MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        ViewTarget target = new ViewTarget(R.id.camera_button, this);
+        new ShowcaseView.Builder(this)
+                .setTarget(target)
+                .setContentTitle("hah")
+                .setContentText("bla")
+                .hideOnTouchOutside()
+                .setStyle(R.style.CustomShowcaseTheme1)
+                .build();
 
     }
 
@@ -140,5 +155,25 @@ public class  MainActivity extends AppCompatActivity {
         animalName = new GetAnimalName(textView);
         image.reconfigure(image.getHeight(), image.getWidth(), Bitmap.Config.RGB_565);
         animalName.execute(image);
+    }
+
+    @Override
+    public void onShowcaseViewHide(ShowcaseView showcaseView) {
+
+    }
+
+    @Override
+    public void onShowcaseViewDidHide(ShowcaseView showcaseView) {
+
+    }
+
+    @Override
+    public void onShowcaseViewShow(ShowcaseView showcaseView) {
+
+    }
+
+    @Override
+    public void onShowcaseViewTouchBlocked(MotionEvent motionEvent) {
+
     }
 }

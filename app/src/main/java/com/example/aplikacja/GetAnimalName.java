@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.chaquo.python.Python;
@@ -17,22 +18,23 @@ public class GetAnimalName extends AsyncTask<Bitmap, String, Void>
 {
     private TextView textView;
     private String nameOfAnimal;
+    private Switch detectionSwitch = null;
 
     public GetAnimalName(TextView textView)
     {
         this.textView = textView;
     }
 
+    public GetAnimalName(TextView textView, Switch detectionSwitch)
+    {
+        this.textView = textView;
+        this.detectionSwitch = detectionSwitch;
+    }
+
     @Override
     protected Void doInBackground(Bitmap... bitmaps) {
-
-
-            while(true)
+            while(!isCancelled())
             {
-                if(isCancelled())
-                {
-                    break;
-                }
                 Long start = currentTimeMillis();
 
                 Python py = Python.getInstance();
@@ -50,6 +52,11 @@ public class GetAnimalName extends AsyncTask<Bitmap, String, Void>
                     @Override
                     public void run() {
                         textView.setText(nameOfAnimal);
+                        if(detectionSwitch!=null && !detectionSwitch.isChecked())
+                        {
+                            cancel(true);
+                        }
+
                     }
                 });
             }
