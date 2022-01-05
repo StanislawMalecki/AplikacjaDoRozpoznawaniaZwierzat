@@ -32,6 +32,9 @@ import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CameraActivity extends Activity implements CameraBridgeViewBase.CvCameraViewListener2{
     private static final String TAG="MainActivity";
 
@@ -41,11 +44,12 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
     private Mat mGray;
     private Bitmap bitmap;
     private Switch detectionSwitch;
-    private int frame_counter = 0;
     private Button goBackButton;
     private TextView whatAnimal;
+    GetAnimalName animalName = new GetAnimalName(null);
     private boolean detectionOn = false;
     private CameraBridgeViewBase mOpenCvCameraView;
+    public static List<Long> allTimes = new ArrayList<>();
     private BaseLoaderCallback mLoaderCallback =new BaseLoaderCallback(this) {
         @Override
         public void onManagerConnected(int status)
@@ -101,10 +105,15 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
 
         detectionSwitch = findViewById(R.id.Animal_detection);
         whatAnimal = findViewById(R.id.whatAnimalCamera);
+        detectionOn = false;
         detectionSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 detectionOn = detectionSwitch.isChecked();
+                if(!detectionSwitch.isChecked())
+                {
+                    animalName.cancel(true);
+                }
             }
         });
 
@@ -113,14 +122,11 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
         goBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(detectionOn)
-                {
-                    Toast.makeText(CameraActivity.this, "Najpierw wyłacz rozpoznawanie", Toast.LENGTH_SHORT);
-                }
-                else
-                {
-                    startActivity(new Intent(CameraActivity.this, MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP));
-                }
+                detectionSwitch.setChecked(false);
+                detectionOn = false;
+                animalName.cancel(true);
+                startActivity(new Intent(CameraActivity.this, MainActivity.class)
+                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP));
             }
         });
     }
@@ -151,6 +157,10 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
         {
             mOpenCvCameraView.disableView();
         }
+        if(!animalName.isCancelled())
+        {
+            animalName.cancel(true);
+        }
     }
 
     public void onDestroy()
@@ -159,6 +169,10 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
         if(mOpenCvCameraView !=null)
         {
             mOpenCvCameraView.disableView();
+        }
+        if(!animalName.isCancelled())
+        {
+            animalName.cancel(true);
         }
     }
 
@@ -177,20 +191,15 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
         mRgba=inputFrame.rgba();
         if(detectionOn)
         {
-            if(frame_counter % 30 ==0)
-            {
-                getAnimal(whatAnimal);
-            }
-            frame_counter++;
+            getAnimal(whatAnimal);
         }
-
         return mRgba;
     }
 
     public void getAnimal(TextView textView)
     {
         frame = mRgba;
-        GetAnimalName animalName = new GetAnimalName(textView);
+        animalName = new GetAnimalName(textView);
         Utils.matToBitmap(frame, bitmap);
         animalName.execute(bitmap);
     }

@@ -34,7 +34,7 @@ public class  MainActivity extends AppCompatActivity {
             Log.d("MainActivity: ","Opencv failed to load");
         }
     }
-
+    private GetAnimalName animalName = new GetAnimalName(null);
     private Button camera_button;
     private Button animal_recognition;
     private Bitmap image;
@@ -62,13 +62,14 @@ public class  MainActivity extends AppCompatActivity {
                     MY_PERMISSIONS_REQUEST_STORAGE);
         }
 
-        i1 = (ImageView)findViewById(R.id.imageView);
+        i1 = findViewById(R.id.imageView);
         camera_button=findViewById(R.id.camera_button);
         camera_button.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
+                animalName.cancel(true);
                 startActivity(new Intent(MainActivity.this,CameraActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP));
             }
         });
@@ -137,7 +138,7 @@ public class  MainActivity extends AppCompatActivity {
 
     public void getAnimal(TextView textView)
     {
-        GetAnimalName animalName = new GetAnimalName(textView);
+        animalName = new GetAnimalName(textView);
         image.reconfigure(image.getHeight(), image.getWidth(), Bitmap.Config.RGB_565);
         animalName.execute(image);
     }
