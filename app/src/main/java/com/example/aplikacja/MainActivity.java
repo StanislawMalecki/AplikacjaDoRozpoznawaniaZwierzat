@@ -19,6 +19,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.chaquo.python.Python;
@@ -30,7 +31,7 @@ import com.github.amlcurran.showcaseview.targets.ViewTarget;
 
 import org.opencv.android.OpenCVLoader;
 
-public class  MainActivity extends AppCompatActivity implements OnShowcaseEventListener {
+public class  MainActivity extends AppCompatActivity {
     static {
         if(OpenCVLoader.initDebug()){
             Log.d("MainActivity: ","Opencv is loaded");
@@ -96,15 +97,18 @@ public class  MainActivity extends AppCompatActivity implements OnShowcaseEventL
             }
         });
 
-        ViewTarget target = new ViewTarget(R.id.camera_button, this);
-        new ShowcaseView.Builder(this)
-                .setTarget(target)
-                .setContentTitle("hah")
-                .setContentText("bla")
-                .hideOnTouchOutside()
-                .setStyle(R.style.CustomShowcaseTheme1)
-                .build();
 
+//        boolean firstrun = getSharedPreferences("PREFERENCE", MODE_PRIVATE).getBoolean("firstrun", true);
+//        if (firstrun)
+//        {
+            runHelp();
+
+            getSharedPreferences("PREFERENCE", MODE_PRIVATE)
+                    .edit()
+                    .putBoolean("firstrun", false)
+                    .commit();
+
+//        }
     }
 
     public void openGallery (View v)
@@ -157,23 +161,25 @@ public class  MainActivity extends AppCompatActivity implements OnShowcaseEventL
         animalName.execute(image);
     }
 
-    @Override
-    public void onShowcaseViewHide(ShowcaseView showcaseView) {
+    public void runHelp()
+    {
+        ViewTarget camera = new ViewTarget(R.id.camera_button, this);
+        ViewTarget animalRec = new ViewTarget(R.id.animal_recognition, this);
+        ViewTarget image = new ViewTarget(R.id.loadImage, this);
+        ShowcaseView showcaseView = new ShowcaseView.Builder(this)
+                .setTarget(camera)
+                .setContentTitle("hah")
+                .setContentText("bla")
+                .hideOnTouchOutside()
+                .setStyle(R.style.CustomShowcaseTheme1)
+                .build();
+        showcaseView.setButtonText("aaaaaaaaaaaa");
+        showcaseView.overrideButtonClick(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showcaseView.hide();
 
-    }
-
-    @Override
-    public void onShowcaseViewDidHide(ShowcaseView showcaseView) {
-
-    }
-
-    @Override
-    public void onShowcaseViewShow(ShowcaseView showcaseView) {
-
-    }
-
-    @Override
-    public void onShowcaseViewTouchBlocked(MotionEvent motionEvent) {
-
+            }
+        });
     }
 }
