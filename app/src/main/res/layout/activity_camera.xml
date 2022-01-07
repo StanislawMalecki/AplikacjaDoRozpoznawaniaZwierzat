@@ -11,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@id/whatAnimalCamera"
-        app:show_fps="true" />
+        app:show_fps="false" />
 
     <Switch
         android:id="@+id/Animal_detection"
@@ -20,7 +20,6 @@
         android:layout_alignParentBottom="true"
         android:layout_centerInParent="true"
         android:minHeight="32dp"
-        android:onClick="getAnimal"
         android:text="Wykryj zwierzę"
         android:visibility="visible"
         tools:visibility="visible" />

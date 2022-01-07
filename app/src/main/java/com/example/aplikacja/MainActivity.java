@@ -15,13 +15,19 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.chaquo.python.Python;
 import com.chaquo.python.android.AndroidPlatform;
+import com.github.amlcurran.showcaseview.OnShowcaseEventListener;
+import com.github.amlcurran.showcaseview.ShowcaseView;
+import com.github.amlcurran.showcaseview.targets.ActionViewTarget;
+import com.github.amlcurran.showcaseview.targets.ViewTarget;
 
 import org.opencv.android.OpenCVLoader;
 
@@ -34,7 +40,7 @@ public class  MainActivity extends AppCompatActivity {
             Log.d("MainActivity: ","Opencv failed to load");
         }
     }
-
+    private GetAnimalName animalName = new GetAnimalName(null);
     private Button camera_button;
     private Button animal_recognition;
     private Bitmap image;
@@ -46,6 +52,7 @@ public class  MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        isImageUploaded = false;
 
         OpenCVLoader.initDebug();
 
@@ -62,13 +69,14 @@ public class  MainActivity extends AppCompatActivity {
                     MY_PERMISSIONS_REQUEST_STORAGE);
         }
 
-        i1 = (ImageView)findViewById(R.id.imageView);
+        i1 = findViewById(R.id.imageView);
         camera_button=findViewById(R.id.camera_button);
         camera_button.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
+                animalName.cancel(true);
                 startActivity(new Intent(MainActivity.this,CameraActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP));
             }
         });
@@ -89,6 +97,18 @@ public class  MainActivity extends AppCompatActivity {
             }
         });
 
+
+//        boolean firstrun = getSharedPreferences("PREFERENCE", MODE_PRIVATE).getBoolean("firstrun", true);
+//        if (firstrun)
+//        {
+            runHelp();
+
+            getSharedPreferences("PREFERENCE", MODE_PRIVATE)
+                    .edit()
+                    .putBoolean("firstrun", false)
+                    .commit();
+
+//        }
     }
 
     public void openGallery (View v)
@@ -134,10 +154,32 @@ public class  MainActivity extends AppCompatActivity {
         return uri.getPath();
     }
 
-
     public void getAnimal(TextView textView)
     {
-        GetAnimalName animalName = new GetAnimalName(image, textView);
-        animalName.execute();
+        animalName = new GetAnimalName(textView);
+        image.reconfigure(image.getHeight(), image.getWidth(), Bitmap.Config.RGB_565);
+        animalName.execute(image);
+    }
+
+    public void runHelp()
+    {
+        ViewTarget camera = new ViewTarget(R.id.camera_button, this);
+        ViewTarget animalRec = new ViewTarget(R.id.animal_recognition, this);
+        ViewTarget image = new ViewTarget(R.id.loadImage, this);
+        ShowcaseView showcaseView = new ShowcaseView.Builder(this)
+                .setTarget(camera)
+                .setContentTitle("hah")
+                .setContentText("bla")
+                .hideOnTouchOutside()
+                .setStyle(R.style.CustomShowcaseTheme1)
+                .build();
+        showcaseView.setButtonText("aaaaaaaaaaaa");
+        showcaseView.overrideButtonClick(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showcaseView.hide();
+
+            }
+        });
     }
 }

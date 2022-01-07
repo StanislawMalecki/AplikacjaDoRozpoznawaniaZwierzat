@@ -7,6 +7,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -17,6 +18,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.chaquo.python.Python;
 import com.chaquo.python.android.AndroidPlatform;
@@ -25,9 +27,13 @@ import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
+import org.opencv.android.Utils;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class CameraActivity extends Activity implements CameraBridgeViewBase.CvCameraViewListener2{
     private static final String TAG="MainActivity";
@@ -35,13 +41,14 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
     private Handler threadHandler = new Handler();
     private Mat mRgba;
     private Mat frame;
-    private Mat mGray;
+    private Bitmap bitmap;
     private Switch detectionSwitch;
-    private int frame_counter = 0;
     private Button goBackButton;
     private TextView whatAnimal;
+    GetAnimalName animalName = new GetAnimalName(null);
     private boolean detectionOn = false;
     private CameraBridgeViewBase mOpenCvCameraView;
+    public static List<Long> allTimes = new ArrayList<>();
     private BaseLoaderCallback mLoaderCallback =new BaseLoaderCallback(this) {
         @Override
         public void onManagerConnected(int status)
@@ -97,10 +104,15 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
 
         detectionSwitch = findViewById(R.id.Animal_detection);
         whatAnimal = findViewById(R.id.whatAnimalCamera);
+        detectionOn = false;
         detectionSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 detectionOn = detectionSwitch.isChecked();
+                if(!detectionSwitch.isChecked())
+                {
+                    animalName.cancel(true);
+                }
             }
         });
 
@@ -109,7 +121,11 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
         goBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(CameraActivity.this, MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP));
+                detectionSwitch.setChecked(false);
+                detectionOn = false;
+                animalName.cancel(true);
+                startActivity(new Intent(CameraActivity.this, MainActivity.class)
+                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP));
             }
         });
     }
@@ -140,6 +156,10 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
         {
             mOpenCvCameraView.disableView();
         }
+        if(!animalName.isCancelled())
+        {
+            animalName.cancel(true);
+        }
     }
 
     public void onDestroy()
@@ -149,12 +169,16 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
         {
             mOpenCvCameraView.disableView();
         }
+        if(!animalName.isCancelled())
+        {
+            animalName.cancel(true);
+        }
     }
 
     public void onCameraViewStarted(int width ,int height)
     {
         mRgba = new Mat(height, width, CvType.CV_64FC4);
-        mGray = new Mat(height, width, CvType.CV_8UC1);
+        bitmap = Bitmap.createBitmap(width,height,Bitmap.Config.RGB_565);
     }
     public void onCameraViewStopped()
     {
@@ -165,20 +189,16 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
         mRgba=inputFrame.rgba();
         if(detectionOn)
         {
-            if(frame_counter % 30 ==0)
-            {
-                getAnimal(whatAnimal);
-            }
-            frame_counter++;
+            getAnimal(whatAnimal, detectionSwitch);
         }
-
         return mRgba;
     }
 
-    public void getAnimal(TextView textView)
+    public void getAnimal(TextView textView, Switch detectionSwitch)
     {
         frame = mRgba;
-        GetAnimalName animalName = new GetAnimalName(frame, textView);
-        animalName.execute(frame);
+        animalName = new GetAnimalName(textView, detectionSwitch);
+        Utils.matToBitmap(frame, bitmap);
+        animalName.execute(bitmap);
     }
 }
