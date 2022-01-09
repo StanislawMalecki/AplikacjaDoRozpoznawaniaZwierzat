@@ -22,6 +22,8 @@ import android.widget.Toast;
 
 import com.chaquo.python.Python;
 import com.chaquo.python.android.AndroidPlatform;
+import com.github.amlcurran.showcaseview.ShowcaseView;
+import com.github.amlcurran.showcaseview.targets.ViewTarget;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
@@ -49,6 +51,7 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
     private boolean detectionOn = false;
     private CameraBridgeViewBase mOpenCvCameraView;
     public static List<Long> allTimes = new ArrayList<>();
+    private int helpEnum;
     private BaseLoaderCallback mLoaderCallback =new BaseLoaderCallback(this) {
         @Override
         public void onManagerConnected(int status)
@@ -78,6 +81,8 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
+        helpEnum = 0;
+
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -101,7 +106,6 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
             Python.start(new AndroidPlatform(this));
         }
 
-
         detectionSwitch = findViewById(R.id.Animal_detection);
         whatAnimal = findViewById(R.id.whatAnimalCamera);
         detectionOn = false;
@@ -111,11 +115,10 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
                 detectionOn = detectionSwitch.isChecked();
                 if(!detectionSwitch.isChecked())
                 {
-                    animalName.cancel(true);
+                    animalName.setOff(true);
                 }
             }
         });
-
 
         goBackButton=findViewById(R.id.goBack);
         goBackButton.setOnClickListener(new View.OnClickListener() {
@@ -123,11 +126,23 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
             public void onClick(View v) {
                 detectionSwitch.setChecked(false);
                 detectionOn = false;
-                animalName.cancel(true);
+                animalName.setOff(true);
                 startActivity(new Intent(CameraActivity.this, MainActivity.class)
                         .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP));
             }
         });
+
+        boolean firstrun = getSharedPreferences("PREFERENCE", MODE_PRIVATE).getBoolean("firstrun", true);
+        if (firstrun)
+        {
+        helpEnum = 0;
+        runHelp();
+        getSharedPreferences("PREFERENCE", MODE_PRIVATE)
+                .edit()
+                .putBoolean("firstrun", false)
+                .commit();
+
+        }
     }
 
     @Override
@@ -158,7 +173,7 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
         }
         if(!animalName.isCancelled())
         {
-            animalName.cancel(true);
+            animalName.setOff(true);
         }
     }
 
@@ -171,7 +186,7 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
         }
         if(!animalName.isCancelled())
         {
-            animalName.cancel(true);
+            animalName.setOff(true);
         }
     }
 
@@ -200,5 +215,43 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
         animalName = new GetAnimalName(textView, detectionSwitch);
         Utils.matToBitmap(frame, bitmap);
         animalName.execute(bitmap);
+    }
+
+    public void runHelp()
+    {
+        ViewTarget goBack = new ViewTarget(R.id.goBack, this);
+        ViewTarget animalDet = new ViewTarget(R.id.Animal_detection, this);
+        ViewTarget camera = new ViewTarget(R.id.frame_Surface, this);
+        ShowcaseView showcaseView = new ShowcaseView.Builder(this)
+                .setTarget(goBack)
+                .setContentTitle(HelpInstructionEnum.CONTENT_TITLE_GO_BACK_BUTTON.text)
+                .setContentText(HelpInstructionEnum.CONTENT_TEXT_GO_BACK_BUTTON.text)
+                .setStyle(R.style.CustomShowcaseTheme1)
+                .build();
+        showcaseView.setButtonText("Następny");
+        showcaseView.overrideButtonClick(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                helpEnum++;
+                switch (helpEnum)
+                {
+                    case 1:
+                        showcaseView.setTarget(animalDet);
+                        showcaseView.setContentText(HelpInstructionEnum.CONTENT_TEXT_ANIMAL_RECOGNITION_SWITCH.text);
+                        showcaseView.setContentTitle(HelpInstructionEnum.CONTENT_TITLE_ANIMAL_RECOGNITION_SWITCH.text);
+                        break;
+                    case 2:
+                        showcaseView.setTarget(camera);
+                        showcaseView.setContentText(HelpInstructionEnum.CONTENT_TEXT_CAMERA_VIEW.text);
+                        showcaseView.setContentTitle(HelpInstructionEnum.CONTENT_TITLE_CAMERA_VIEW.text);
+                        showcaseView.setHideOnTouchOutside(true);
+                        break;
+                    case 3:
+                        showcaseView.hide();
+                        break;
+                }
+
+            }
+        });
     }
 }

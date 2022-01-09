@@ -19,21 +19,32 @@ public class GetAnimalName extends AsyncTask<Bitmap, String, Void>
     private TextView textView;
     private String nameOfAnimal;
     private Switch detectionSwitch = null;
+    public boolean off;
 
     public GetAnimalName(TextView textView)
     {
         this.textView = textView;
+        off = false;
     }
 
     public GetAnimalName(TextView textView, Switch detectionSwitch)
     {
+        off = false;
         this.textView = textView;
         this.detectionSwitch = detectionSwitch;
     }
 
+    public boolean isOff() {
+        return off;
+    }
+
+    public void setOff(boolean canceled) {
+        this.off = canceled;
+    }
+
     @Override
     protected Void doInBackground(Bitmap... bitmaps) {
-            while(!isCancelled())
+            while(!isOff())
             {
                 Long start = currentTimeMillis();
 
@@ -54,7 +65,7 @@ public class GetAnimalName extends AsyncTask<Bitmap, String, Void>
                         textView.setText(nameOfAnimal);
                         if(detectionSwitch!=null && !detectionSwitch.isChecked())
                         {
-                            cancel(true);
+                            setOff(true);
                         }
 
                     }

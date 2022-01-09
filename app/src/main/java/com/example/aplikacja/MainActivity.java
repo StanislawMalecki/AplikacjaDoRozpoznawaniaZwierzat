@@ -47,6 +47,7 @@ public class  MainActivity extends AppCompatActivity {
     private TextView whatAnimal;
     ImageView i1;
     boolean isImageUploaded = false;
+    private int helpEnum = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +77,7 @@ public class  MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v)
             {
-                animalName.cancel(true);
+                animalName.setOff(true);
                 startActivity(new Intent(MainActivity.this,CameraActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP));
             }
         });
@@ -98,17 +99,17 @@ public class  MainActivity extends AppCompatActivity {
         });
 
 
-//        boolean firstrun = getSharedPreferences("PREFERENCE", MODE_PRIVATE).getBoolean("firstrun", true);
-//        if (firstrun)
-//        {
+        boolean firstrun = getSharedPreferences("PREFERENCE", MODE_PRIVATE).getBoolean("firstrun", true);
+        if (firstrun)
+        {
+            helpEnum = 0;
             runHelp();
+//            getSharedPreferences("PREFERENCE", MODE_PRIVATE)
+//                    .edit()
+//                    .putBoolean("firstrun", false)
+//                    .commit();
 
-            getSharedPreferences("PREFERENCE", MODE_PRIVATE)
-                    .edit()
-                    .putBoolean("firstrun", false)
-                    .commit();
-
-//        }
+        }
     }
 
     public void openGallery (View v)
@@ -168,18 +169,35 @@ public class  MainActivity extends AppCompatActivity {
         ViewTarget image = new ViewTarget(R.id.loadImage, this);
         ShowcaseView showcaseView = new ShowcaseView.Builder(this)
                 .setTarget(camera)
-                .setContentTitle("hah")
-                .setContentText("bla")
-                .hideOnTouchOutside()
+                .setContentTitle(HelpInstructionEnum.CONTENT_TITLE_CAMERA_VIEW_BUTTON.text)
+                .setContentText(HelpInstructionEnum.CONTENT_TEXT_CAMERA_VIEW_BUTTON.text)
                 .setStyle(R.style.CustomShowcaseTheme1)
                 .build();
-        showcaseView.setButtonText("aaaaaaaaaaaa");
+        showcaseView.setButtonText("Następny");
         showcaseView.overrideButtonClick(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showcaseView.hide();
+                helpEnum++;
+                switch (helpEnum)
+                {
+                    case 1:
+                        showcaseView.setTarget(image);
+                        showcaseView.setContentText(HelpInstructionEnum.CONTENT_TEXT_LOAD_IMAGE_BUTTON.text);
+                        showcaseView.setContentTitle(HelpInstructionEnum.CONTENT_TITLE_LOAD_IMAGE_BUTTON.text);
 
-            }
+                        break;
+                    case 2:
+                        showcaseView.setTarget(animalRec);
+                        showcaseView.setContentText(HelpInstructionEnum.CONTENT_TEXT_ANIMAL_RECOGNITION_BUTTON.text);
+                        showcaseView.setContentTitle(HelpInstructionEnum.CONTENT_TITLE_ANIMAL_RECOGNITION_BUTTON.text);
+                        showcaseView.setHideOnTouchOutside(true);
+                        break;
+                    case 3:
+                        showcaseView.hide();
+                        break;
+                }
+
+        }
         });
     }
 }
