@@ -76,7 +76,7 @@ public class  MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v)
             {
-                animalName.cancel(true);
+                animalName.setOff(true);
                 startActivity(new Intent(MainActivity.this,CameraActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP));
             }
         });
@@ -173,13 +173,13 @@ public class  MainActivity extends AppCompatActivity {
                 .hideOnTouchOutside()
                 .setStyle(R.style.CustomShowcaseTheme1)
                 .build();
-        showcaseView.setButtonText("aaaaaaaaaaaa");
+        showcaseView.setButtonText("Następny");
         showcaseView.overrideButtonClick(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showcaseView.hide();
 
-            }
+        }
         });
     }
 }

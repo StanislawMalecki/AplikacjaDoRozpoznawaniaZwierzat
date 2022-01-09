@@ -111,7 +111,7 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
                 detectionOn = detectionSwitch.isChecked();
                 if(!detectionSwitch.isChecked())
                 {
-                    animalName.cancel(true);
+                    animalName.setOff(true);
                 }
             }
         });
@@ -123,7 +123,7 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
             public void onClick(View v) {
                 detectionSwitch.setChecked(false);
                 detectionOn = false;
-                animalName.cancel(true);
+                animalName.setOff(true);
                 startActivity(new Intent(CameraActivity.this, MainActivity.class)
                         .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP));
             }
@@ -158,7 +158,7 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
         }
         if(!animalName.isCancelled())
         {
-            animalName.cancel(true);
+            animalName.setOff(true);
         }
     }
 
@@ -171,7 +171,7 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
         }
         if(!animalName.isCancelled())
         {
-            animalName.cancel(true);
+            animalName.setOff(true);
         }
     }
 
