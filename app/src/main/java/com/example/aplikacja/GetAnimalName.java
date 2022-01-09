@@ -9,7 +9,6 @@ import android.os.Looper;
 import android.util.Log;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.ThemedSpinnerAdapter;
 
 import com.chaquo.python.Python;
 
@@ -34,7 +33,7 @@ public class GetAnimalName extends AsyncTask<Bitmap, String, Void>
 
     @Override
     protected Void doInBackground(Bitmap... bitmaps) {
-            if(!isCancelled())
+            while (!isCancelled())
             {
                 Long start = currentTimeMillis();
 
