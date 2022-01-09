@@ -9,6 +9,7 @@ import android.os.Looper;
 import android.util.Log;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.ThemedSpinnerAdapter;
 
 import com.chaquo.python.Python;
 
@@ -19,32 +20,21 @@ public class GetAnimalName extends AsyncTask<Bitmap, String, Void>
     private TextView textView;
     private String nameOfAnimal;
     private Switch detectionSwitch = null;
-    public boolean off;
 
     public GetAnimalName(TextView textView)
     {
         this.textView = textView;
-        off = false;
     }
 
     public GetAnimalName(TextView textView, Switch detectionSwitch)
     {
-        off = false;
         this.textView = textView;
         this.detectionSwitch = detectionSwitch;
     }
 
-    public boolean isOff() {
-        return off;
-    }
-
-    public void setOff(boolean canceled) {
-        this.off = canceled;
-    }
-
     @Override
     protected Void doInBackground(Bitmap... bitmaps) {
-            while(!isOff())
+            if(!isCancelled())
             {
                 Long start = currentTimeMillis();
 
@@ -63,15 +53,16 @@ public class GetAnimalName extends AsyncTask<Bitmap, String, Void>
                     @Override
                     public void run() {
                         textView.setText(nameOfAnimal);
-                        if(detectionSwitch!=null && !detectionSwitch.isChecked())
-                        {
-                            setOff(true);
-                        }
-
                     }
                 });
             }
 
         return null;
+    }
+
+    @Override
+    protected void onCancelled() {
+        super.onCancelled();
+        Log.i("zdechł??_",isCancelled()+"");
     }
 }

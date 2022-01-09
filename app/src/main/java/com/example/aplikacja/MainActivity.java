@@ -77,7 +77,7 @@ public class  MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v)
             {
-                animalName.setOff(true);
+                animalName.cancel(true);
                 startActivity(new Intent(MainActivity.this,CameraActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP));
             }
         });
