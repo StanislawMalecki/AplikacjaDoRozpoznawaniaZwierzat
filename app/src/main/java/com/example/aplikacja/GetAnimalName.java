@@ -19,7 +19,7 @@ public class GetAnimalName extends AsyncTask<Bitmap, String, Void>
     private TextView textView;
     private String nameOfAnimal;
     private Switch detectionSwitch = null;
-    public boolean off = false;
+    public boolean off;
 
     public GetAnimalName(TextView textView)
     {
