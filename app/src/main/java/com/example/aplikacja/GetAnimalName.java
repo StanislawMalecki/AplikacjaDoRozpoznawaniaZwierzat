@@ -18,17 +18,10 @@ public class GetAnimalName extends AsyncTask<Bitmap, String, Void>
 {
     private TextView textView;
     private String nameOfAnimal;
-    private Switch detectionSwitch = null;
 
     public GetAnimalName(TextView textView)
     {
         this.textView = textView;
-    }
-
-    public GetAnimalName(TextView textView, Switch detectionSwitch)
-    {
-        this.textView = textView;
-        this.detectionSwitch = detectionSwitch;
     }
 
     @Override

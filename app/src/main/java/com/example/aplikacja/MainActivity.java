@@ -45,8 +45,8 @@ public class  MainActivity extends AppCompatActivity {
     private Button animal_recognition;
     private Bitmap image;
     private TextView whatAnimal;
-    ImageView i1;
-    boolean isImageUploaded = false;
+    private ImageView i1;
+    private boolean isImageUploaded = false;
     private int helpEnum = 0;
 
     @Override
@@ -104,11 +104,6 @@ public class  MainActivity extends AppCompatActivity {
         {
             helpEnum = 0;
             runHelp();
-//            getSharedPreferences("PREFERENCE", MODE_PRIVATE)
-//                    .edit()
-//                    .putBoolean("firstrun", false)
-//                    .commit();
-
         }
     }
 
