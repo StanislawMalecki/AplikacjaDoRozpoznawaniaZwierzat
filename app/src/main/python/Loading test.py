@@ -13,26 +13,25 @@ import os
 
 def test(zdj):
     path = os.path.dirname(__file__)
-    model = keras.models.load_model(f"{path}/a/Test.h5")
-    model1 = keras.models.load_model(f"{path}/a/bottleneck_fc_model128.h5")
+    model = keras.models.load_model(f"{path}/a/CatDogElefant.h5")
+    # model1 = keras.models.load_model(f"{path}/a/bottleneck_fc_model128.h5")
     pic = Image.open(io.BytesIO(bytes(zdj)))
     pic = pic.resize((128,128),Image.NEAREST)
     test_image = np.array(pic, dtype='float')
     test_image = np.expand_dims(test_image, axis = 0)
     test_image/=255
-    result = model.predict(test_image)
-    preds = model1.predict(result)
+    # result = model.predict(test_image)
+    preds = model.predict(test_image)
     wynik = np.argmax(preds)
-    print(wynik)
     if wynik == 0:
-        print("Koń ", preds[:wynik])
+        return "Kot " + str(preds[0][0]*100) + " %"
     elif wynik == 1:
-        print("Kot ", preds[:wynik])
+        return "Pies "+ str(preds[0][1]*100) + " %"
     elif wynik == 2:
-        print("Krowa ", preds[:wynik])
-    elif wynik == 3:
-        print("Kura ", preds[:wynik])
-    elif wynik == 4:
-        print("Pies ", preds[:wynik])
+        return "Słoń "+ str(preds[0][2]*100) + " %"
+    # elif wynik == 3:
+    #     print("Kura ", preds[:wynik])
+    # elif wynik == 4:
+    #     print("Pies ", preds[:wynik])
     else:
-        print("Błąd")
+        return "Błąd"
