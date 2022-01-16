@@ -18,6 +18,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -43,7 +44,9 @@ public class  MainActivity extends AppCompatActivity {
     private GetAnimalName animalName = new GetAnimalName(null);
     private Button camera_button;
     private Button animal_recognition;
+    private ImageButton help;
     private Bitmap image;
+    public static boolean firstrun;
     private TextView whatAnimal;
     ImageView i1;
     boolean isImageUploaded = false;
@@ -98,17 +101,20 @@ public class  MainActivity extends AppCompatActivity {
             }
         });
 
-
-        boolean firstrun = getSharedPreferences("PREFERENCE", MODE_PRIVATE).getBoolean("firstrun", true);
+        help = findViewById(R.id.imageButton);
+        help.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                helpEnum=0;
+                firstrun=true;
+                runHelp();
+            }
+        });
+        firstrun = getSharedPreferences("PREFERENCE", MODE_PRIVATE).getBoolean("firstrun", true);
         if (firstrun)
         {
             helpEnum = 0;
             runHelp();
-//            getSharedPreferences("PREFERENCE", MODE_PRIVATE)
-//                    .edit()
-//                    .putBoolean("firstrun", false)
-//                    .commit();
-
         }
     }
 

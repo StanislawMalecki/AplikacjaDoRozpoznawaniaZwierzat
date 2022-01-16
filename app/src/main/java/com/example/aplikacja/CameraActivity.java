@@ -1,5 +1,7 @@
 package com.example.aplikacja;
 
+import static com.example.aplikacja.MainActivity.firstrun;
+
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -16,6 +18,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -46,6 +49,7 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
     private Bitmap bitmap;
     private Switch detectionSwitch;
     private Button goBackButton;
+    private ImageButton help;
     private TextView whatAnimal;
     GetAnimalName animalName = new GetAnimalName(null);
     private boolean detectionOn = false;
@@ -132,7 +136,14 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
             }
         });
 
-        boolean firstrun = getSharedPreferences("PREFERENCE", MODE_PRIVATE).getBoolean("firstrun", true);
+        help= findViewById(R.id.imageButtonCamera);
+        help.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                runHelp();
+            }
+        });
+
         if (firstrun)
         {
         helpEnum = 0;
