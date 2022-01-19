@@ -163,6 +163,12 @@ public class  MainActivity extends AppCompatActivity {
 
     public void getAnimal(TextView textView)
     {
+        if (! Python.isStarted()) {
+            Python.start(new AndroidPlatform(MainActivity.this));
+        }
+        Python py = Python.getInstance();
+        py.getModule("Loading test").callAttr("prepare");
+
         animalName = new GetAnimalName(textView);
         image.reconfigure(image.getHeight(), image.getWidth(), Bitmap.Config.RGB_565);
         animalName.execute(image);
