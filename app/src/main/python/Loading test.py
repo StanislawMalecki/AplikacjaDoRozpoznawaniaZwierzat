@@ -20,20 +20,20 @@ def test(zdj):
     test_image = np.array(pic, dtype='float')
     test_image = np.expand_dims(test_image, axis = 0)
     test_image/=255
-    preds1 = model.predict(test_image)
-    preds = model1.predict(preds1)
+    result = model.predict(test_image)
+    preds = model1.predict(result)
     wynik = np.argmax(preds)
     if wynik == 0:
-        print("Kot ", preds[:wynik])
+        return "Kot " + str(round(preds[0][0]*100,2)) + " %"
     elif wynik == 1:
-        print("Koń ", preds[:wynik])
+        return"Koń " + str(round(preds[1][0]*100,2)) + " %"
     elif wynik == 2:
-        print("Krowa ", preds[:wynik])
+        return"Krowa " + str(round(preds[2][0]*100,2)*100) + " %"
     elif wynik == 3:
-        print("Pies ", preds[:wynik])
+        return"Pies " + str(round(preds[3][0]*100,2)*100) + " %"
     elif wynik == 4:
-        print("Sarna ", preds[:wynik])
+        return"Sarna " + str(round(preds[4][0]*100,2)*100) + " %"
     elif wynik == 4:
-        print("Lis ", preds[:wynik])
+        return"Lis " + str(round(preds[5][0]*100,2)*100) + " %"
     else:
-        print("Błąd")
+        return "Błąd"
