@@ -106,10 +106,6 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
         mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
         mOpenCvCameraView.setCvCameraViewListener(this);
 
-        if (! Python.isStarted()) {
-            Python.start(new AndroidPlatform(this));
-        }
-
         detectionSwitch = findViewById(R.id.Animal_detection);
         whatAnimal = findViewById(R.id.whatAnimalCamera);
         detectionOn = false;
@@ -154,6 +150,12 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
                 .commit();
 
         }
+
+        if (! Python.isStarted()) {
+            Python.start(new AndroidPlatform(CameraActivity.this));
+        }
+        Python py = Python.getInstance();
+        py.getModule("Loading test").callAttr("prepare");
     }
 
     @Override
@@ -223,7 +225,7 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
     public void getAnimal(TextView textView, Switch detectionSwitch)
     {
         frame = mRgba;
-        animalName = new GetAnimalName(textView, detectionSwitch);
+        animalName = new GetAnimalName(textView);
         Utils.matToBitmap(frame, bitmap);
         animalName.execute(bitmap);
     }
