@@ -28,12 +28,12 @@ def test(zdj):
     elif wynik == 1:
         return"Koń " + str(round(preds[1][0]*100,2)) + " %"
     elif wynik == 2:
-        return"Krowa " + str(round(preds[2][0]*100,2)*100) + " %"
+        return"Krowa " + str(round(preds[2][0]*100,2)) + " %"
     elif wynik == 3:
-        return"Pies " + str(round(preds[3][0]*100,2)*100) + " %"
+        return"Pies " + str(round(preds[3][0]*100,2)) + " %"
     elif wynik == 4:
-        return"Sarna " + str(round(preds[4][0]*100,2)*100) + " %"
-    elif wynik == 4:
-        return"Lis " + str(round(preds[5][0]*100,2)*100) + " %"
+        return"Sarna " + str(round(preds[4][0]*100,2)) + " %"
+    elif wynik == 5:
+        return"Lis " + str(round(preds[5][0]*100,2)) + " %"
     else:
         return "Błąd"
