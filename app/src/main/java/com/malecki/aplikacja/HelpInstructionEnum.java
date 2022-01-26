@@ -1,4 +1,4 @@
-package com.example.aplikacja;
+package com.malecki.aplikacja;
 
 public enum HelpInstructionEnum {
 //    Main Activity

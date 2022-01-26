@@ -1,4 +1,4 @@
-package com.example.aplikacja;
+package com.malecki.aplikacja;
 
 import static java.lang.System.currentTimeMillis;
 
@@ -7,9 +7,7 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
-import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.ThemedSpinnerAdapter;
 
 import com.chaquo.python.Python;
 
@@ -29,15 +27,17 @@ public class GetAnimalName extends AsyncTask<Bitmap, String, Void>
     protected Void doInBackground(Bitmap... bitmaps) {
             if(!isCancelled())
             {
-                Long start = currentTimeMillis();
+                long start = currentTimeMillis(); //Obecna godzina przed rozpoczeciem rozpoznania
 
                 Python py = Python.getInstance();
                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                 bitmaps[0].compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
                 byte[] byteArray = byteArrayOutputStream.toByteArray();
-                nameOfAnimal = py.getModule("Loading test").callAttr("test", byteArray).toString();
+                nameOfAnimal = py.getModule("Loading test")
+                        .callAttr("recognise", byteArray).toString(); //Rozpoznawanie
 
-                Long time = currentTimeMillis()-start;
+                //Różnica czasów sprzed rozpoznania i po nim.
+                long time = currentTimeMillis()-start;
                 Log.i("czas", "_"+time);
                 CameraActivity.allTimes.add(time);
 

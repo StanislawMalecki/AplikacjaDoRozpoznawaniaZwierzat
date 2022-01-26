@@ -20,7 +20,7 @@ def prepare():
     model1 = keras.models.load_model(f"{path}/a/bottleneck_fc_model128v2.1.h5")
 
 
-def test(zdj):
+def recognise(zdj):
     pic = Image.open(io.BytesIO(bytes(zdj)))
     pic = pic.resize((128, 128), Image.NEAREST)
     test_image = np.array(pic, dtype='float')

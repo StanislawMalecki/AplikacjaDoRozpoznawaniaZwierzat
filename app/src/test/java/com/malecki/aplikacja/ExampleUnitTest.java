@@ -1,4 +1,4 @@
-package com.example.aplikacja;
+package com.malecki.aplikacja;
 
 import org.junit.Test;
 
