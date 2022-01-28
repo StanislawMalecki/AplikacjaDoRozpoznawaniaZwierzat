@@ -52,7 +52,6 @@ public class CameraActivity extends Activity implements CameraBridgeViewBase.CvC
     GetAnimalName animalName = new GetAnimalName(null);
     private boolean detectionOn = false;
     private CameraBridgeViewBase mOpenCvCameraView;
-    public static List<Long> allTimes = new ArrayList<>();
     private int helpEnum;
     private BaseLoaderCallback mLoaderCallback =new BaseLoaderCallback(this) {
         @Override

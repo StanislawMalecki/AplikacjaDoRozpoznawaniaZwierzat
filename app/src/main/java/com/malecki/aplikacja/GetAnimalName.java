@@ -27,20 +27,12 @@ public class GetAnimalName extends AsyncTask<Bitmap, String, Void>
     protected Void doInBackground(Bitmap... bitmaps) {
             if(!isCancelled())
             {
-                long start = currentTimeMillis(); //Obecna godzina przed rozpoczeciem rozpoznania
-
                 Python py = Python.getInstance();
                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                 bitmaps[0].compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
                 byte[] byteArray = byteArrayOutputStream.toByteArray();
                 nameOfAnimal = py.getModule("Loading test")
-                        .callAttr("recognise", byteArray).toString(); //Rozpoznawanie
-
-                //Różnica czasów sprzed rozpoznania i po nim.
-                long time = currentTimeMillis()-start;
-                Log.i("czas", "_"+time);
-                CameraActivity.allTimes.add(time);
-
+                        .callAttr("recognise", byteArray).toString();
                 Handler threadHandler = new Handler(Looper.getMainLooper());
                 threadHandler.post(new Runnable() {
                     @Override
